@@ -4,7 +4,6 @@ Welcome to my GitHub profile! Here you'll find projects and experiments related 
 
 Feel free to browse through my repositories and discover new ideas! 😊🚀 PS: We all have to start somewhere 😉
 
-- 🌱 I’m currently learning the framework
 
 
 <!--
