@@ -4,7 +4,7 @@ Welcome to my GitHub profile! Here you'll find projects and experiments related 
 
 Feel free to browse through my repositories and discover new ideas! 😊🚀 PS: We all have to start somewhere 😉
 
-<a href="https://app.daily.dev/szymonzych"><img src="https://api.daily.dev/devcards/v2/f7ZEPm99tMTbrCbJ7aiHJ.png?type=default&r=umo" width="256" alt="Szymon Zych's Dev Card"/></a>
+<a href="https://app.daily.dev/szymonzych"><img src="https://api.daily.dev/devcards/v2/f7ZEPm99tMTbrCbJ7aiHJ.png?type=default&r=umo" width="156" alt="Szymon Zych's Dev Card"/></a>
 
 <!--
 **szymszaj/szymszaj** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
