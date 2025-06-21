@@ -2,7 +2,7 @@
 
 Welcome to my GitHub profile! Here you'll find projects and experiments related to my fascination with code. I never know if something will work out, but when I create, I try to have fun and deepen my knowledge of computer science. Who knows, maybe one day I'll even program a robot for you! 😄
 
-Feel free to browse through my repositories and discover new ideas! 😊🚀 PS: We all have to start somewhere 😉
+Feel free to browse through my repositories and discover new ideas! 😊🚀
 
 
 
