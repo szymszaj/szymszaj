@@ -6,7 +6,7 @@ Who knows, maybe one day I'll even program a robot for you! 😄
 Feel free to browse through my repositories and discover new ideas! 😊🚀
 
 <p align="center">
-  <img src="./profile-3d-contrib/profile-night-rainbow.svg" alt="3D contributions" />
+  <img src="https://raw.githubusercontent.com/szymszaj/szymszaj/main/dist/gitworld.svg" alt="GitWorld" />
 </p>
 
 <!--
