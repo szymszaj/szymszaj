@@ -26,7 +26,7 @@ jobs:
           USER_NAME: ${{ github.repository_owner }}
         run: |
           python3 - <<'EOF'
-          import json, os, re, urllib.request, datetime
+          import json, os, re, sys, urllib.request, datetime
 
           USER = os.environ["USER_NAME"]
           TOKEN = os.environ["GH_TOKEN"]
@@ -61,29 +61,46 @@ jobs:
               longest = max(longest, cur)
           print(f"Najdluzsza passa: {longest} dni")
 
-          # --- dorysuj plakietke pod "1d streak" ---
+          # --- skopiuj oryginalna plakietke "Xd streak" ---
           path = "dist/gitworld.svg"
           with open(path, encoding="utf-8") as f:
               svg = f.read()
 
-          m = re.search(r'viewBox="([\d.\-\s]+)"', svg)
-          W = float(m.group(1).split()[2]) if m else 900
-          s = W / 890  # skala
-
-          # >>> tu mozesz poprawic polozenie, jesli bedzie krzywo <
-          w, h = 220 * s, 44 * s
-          x = W - 15 * s - w
-          y = 17 * s + h + 8 * s
-
-          badge = (
-              f'<g id="longest-streak">'
-              f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{6*s:.1f}" fill="#05070d" opacity="0.85"/>'
-              f'<text x="{x + 14*s:.1f}" y="{y + h/2:.1f}" dominant-baseline="middle" '
-              f'font-family="monospace" font-size="{18*s:.1f}" fill="#79a8ff">🏆 {longest}d best streak</text>'
-              f'</g>'
+          tm = re.search(
+              r'<text\b[^>]*>(?:(?!</text>).)*?\d+d streak(?:(?!</text>).)*?</text>',
+              svg, flags=re.S,
           )
-          svg = re.sub(r'<g id="longest-streak">.*?</g>', "", svg, flags=re.S)
-          svg = svg.replace("</svg>", badge + "</svg>")
+          if not tm:
+              i = svg.find("streak")
+              print("Nie znaleziono plakietki. Fragment pliku:")
+              print(svg[max(0, i - 800): i + 200])
+              sys.exit(1)
+
+          rs = svg.rfind("<rect", 0, tm.start())
+          chunk = svg[rs:tm.end()]
+          print("Oryginalna plakietka:\n" + chunk)
+
+          rect_tag = re.match(r'<rect\b[^>]*>', chunk).group(0)
+          H = float(re.search(r'\sheight="([\d.]+)"', rect_tag).group(1))
+          GAP_PX = 8
+          dy = H + H * GAP_PX / 44  # 44px = wysokosc plakietki na ekranie
+
+          new = chunk
+          new = re.sub(
+              r'(\s(?:y|y1|y2|cy))="([\d.\-]+)"',
+              lambda m: f'{m.group(1)}="{float(m.group(2)) + dy:.2f}"',
+              new,
+          )
+          new = re.sub(
+              r'translate\(\s*([\d.\-]+)[\s,]+([\d.\-]+)\s*\)',
+              lambda m: f'translate({m.group(1)},{float(m.group(2)) + dy:.2f})',
+              new,
+          )
+          new = re.sub(r'\sid="[^"]*"', "", new)
+          new = re.sub(r'\d+d streak', f'{longest}d best streak', new)
+          new = new.replace("🔥", "🏆")
+
+          svg = svg[:tm.end()] + f'<g id="longest-streak">{new}</g>' + svg[tm.end():]
 
           with open(path, "w", encoding="utf-8") as f:
               f.write(svg)
