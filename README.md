@@ -6,8 +6,7 @@ Who knows, maybe one day I'll even program a robot for you! 😄
 Feel free to browse through my repositories and discover new ideas! 😊🚀
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/szymszaj/szymszaj/main/dist/profile-card.svg" alt="Profile Card" height="180" />
-  <img src="https://streak-stats.demolab.com?user=szymszaj&theme=tokyonight&hide_border=true" alt="GitHub Streak" height="180" />
+  <img src="https://raw.githubusercontent.com/szymszaj/szymszaj/main/dist/gitworld.svg" alt="GitWorld" />
 </p>
 
 <!--
