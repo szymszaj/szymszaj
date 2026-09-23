@@ -20,6 +20,75 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           svg_out_path: dist/gitworld.svg
 
+      - name: Add longest streak badge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USER_NAME: ${{ github.repository_owner }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, re, urllib.request, datetime
+
+          USER = os.environ["USER_NAME"]
+          TOKEN = os.environ["GH_TOKEN"]
+
+          def gql(query, variables):
+              req = urllib.request.Request(
+                  "https://api.github.com/graphql",
+                  data=json.dumps({"query": query, "variables": variables}).encode(),
+                  headers={"Authorization": f"bearer {TOKEN}", "Content-Type": "application/json"},
+              )
+              with urllib.request.urlopen(req) as r:
+                  return json.load(r)["data"]
+
+          # --- policz najdluzsza passe od zalozenia konta ---
+          created = gql("query($u:String!){user(login:$u){createdAt}}", {"u": USER})["user"]["createdAt"]
+          now = datetime.datetime.utcnow()
+          Q = """query($u:String!,$from:DateTime!,$to:DateTime!){user(login:$u){
+                 contributionsCollection(from:$from,to:$to){contributionCalendar{
+                 weeks{contributionDays{date contributionCount}}}}}}"""
+          days = {}
+          for y in range(int(created[:4]), now.year + 1):
+              frm = f"{y}-01-01T00:00:00Z"
+              to = f"{y}-12-31T23:59:59Z" if y < now.year else now.strftime("%Y-%m-%dT%H:%M:%SZ")
+              data = gql(Q, {"u": USER, "from": frm, "to": to})
+              for w in data["user"]["contributionsCollection"]["contributionCalendar"]["weeks"]:
+                  for d in w["contributionDays"]:
+                      days[d["date"]] = d["contributionCount"]
+
+          longest = cur = 0
+          for date in sorted(days):
+              cur = cur + 1 if days[date] > 0 else 0
+              longest = max(longest, cur)
+          print(f"Najdluzsza passa: {longest} dni")
+
+          # --- dorysuj plakietke pod "1d streak" ---
+          path = "dist/gitworld.svg"
+          with open(path, encoding="utf-8") as f:
+              svg = f.read()
+
+          m = re.search(r'viewBox="([\d.\-\s]+)"', svg)
+          W = float(m.group(1).split()[2]) if m else 900
+          s = W / 890  # skala
+
+          # >>> tu mozesz poprawic polozenie, jesli bedzie krzywo <
+          w, h = 220 * s, 44 * s
+          x = W - 15 * s - w
+          y = 17 * s + h + 8 * s
+
+          badge = (
+              f'<g id="longest-streak">'
+              f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{6*s:.1f}" fill="#05070d" opacity="0.85"/>'
+              f'<text x="{x + 14*s:.1f}" y="{y + h/2:.1f}" dominant-baseline="middle" '
+              f'font-family="monospace" font-size="{18*s:.1f}" fill="#79a8ff">🏆 {longest}d best streak</text>'
+              f'</g>'
+          )
+          svg = re.sub(r'<g id="longest-streak">.*?</g>', "", svg, flags=re.S)
+          svg = svg.replace("</svg>", badge + "</svg>")
+
+          with open(path, "w", encoding="utf-8") as f:
+              f.write(svg)
+          EOF
+
       - name: Commit & Push SVGs
         run: |
           git config user.name "github-actions[bot]"
