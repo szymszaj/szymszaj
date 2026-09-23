@@ -5,7 +5,9 @@ Who knows, maybe one day I'll even program a robot for you! 😄
 
 Feel free to browse through my repositories and discover new ideas! 😊🚀
 
-
+<p align="center">
+  <img src="./profile-3d-contrib/profile-night-rainbow.svg" alt="3D contributions" />
+</p>
 
 <!--
 <a href="https://app.daily.dev/szymonzych"><img src="https://api.daily.dev/devcards/v2/f7ZEPm99tMTbrCbJ7aiHJ.png?type=default&r=umo" width="196" alt="Szymon Zych's Dev Card"/></a>
